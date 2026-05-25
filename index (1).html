@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sessão 1 — Clínica efiCiência</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root {
+  --orange:#E8820C; --orange-l:#FEF3E7; --orange-d:#B5620A;
+  --gray-d:#5A5A5A; --gray-m:#8A8A8A; --gray-l:#F5F5F5;
+  --teal:#0F6E56; --teal-l:#E1F5EE;
+  --purple:#6B5CE7; --purple-l:#EEEDFE;
+  --amber:#BA7517; --amber-l:#FAEEDA;
+  --coral:#993C1D; --coral-l:#FAECE7;
+  --green:#3B6D11; --green-l:#EAF3DE;
+  --text:#1C1C1A; --text-s:#6B6A65;
+  --border:#E4E2DA; --white:#fff; --bg:#F7F5F0;
+  --radius:14px; --shadow:0 2px 20px rgba(0,0,0,0.07);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* VIEWS */
+#view-app, #view-forms { min-height:100vh; }
+#view-forms { display:none; background:var(--bg); }
+
+/* HEADER */
+.header{background:white;border-bottom:1px solid var(--border);padding:14px 20px;position:sticky;top:0;z-index:100;box-shadow:0 1px 8px rgba(0,0,0,0.06);}
+.header-inner{max-width:740px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.logo-area{display:flex;align-items:center;gap:12px;}
+.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,#E8820C,#f0a44c);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.logo-text .clinic{font-size:11px;color:var(--gray-m);letter-spacing:.03em;}
+.logo-text .name{font-size:17px;font-weight:600;color:var(--gray-d);letter-spacing:-.02em;}
+.logo-text .name span{color:var(--orange);}
+.logo-text .sub{font-size:10px;color:var(--gray-m);}
+.progress-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:5px;}
+.progress-steps{display:flex;gap:5px;}
+.prog-dot{width:7px;height:7px;border-radius:50%;background:#DDD;cursor:pointer;transition:all .2s;}
+.prog-dot.done{background:var(--orange-l);border:1.5px solid var(--orange);}
+.prog-dot.active{background:var(--orange);width:18px;border-radius:4px;}
+.prog-label{font-size:11px;color:var(--gray-m);}
+
+/* MAIN */
+.main{max-width:740px;margin:0 auto;padding:20px 16px 90px;}
+.section{display:none;animation:fadeIn .25s ease;}
+.section.visible{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.step-badge{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--orange);background:var(--orange-l);padding:4px 12px;border-radius:20px;margin-bottom:10px;}
+.sec-title{font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;margin-bottom:6px;line-height:1.2;}
+.sec-sub{font-size:14px;color:var(--text-s);margin-bottom:18px;line-height:1.6;}
+
+.card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:20px;margin-bottom:12px;box-shadow:var(--shadow);}
+.card-title{font-size:15px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+.card-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.card p{font-size:14px;color:var(--text-s);line-height:1.7;}
+.card p+p{margin-top:10px;}
+
+.hero{background:linear-gradient(135deg,#5A5A5A,#3a3a3a);border-radius:var(--radius);padding:30px 24px;margin-bottom:14px;text-align:center;color:white;}
+.hero .pre{font-size:12px;opacity:.6;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;}
+.hero h2{font-family:'DM Serif Display',serif;font-size:30px;font-weight:400;margin-bottom:10px;}
+.hero h2 span{color:var(--orange);}
+.hero p{font-size:14px;opacity:.75;line-height:1.6;max-width:480px;margin:0 auto;}
+.hero-chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:16px;}
+.chip{background:rgba(255,255,255,.12);color:white;border-radius:20px;padding:5px 14px;font-size:12px;}
+
+.jornada-step{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);}
+.jornada-step:last-child{border-bottom:none;padding-bottom:0;}
+.j-num{width:34px;height:34px;border-radius:50%;background:var(--orange-l);color:var(--orange);font-size:14px;font-weight:700;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.j-title{font-size:14px;font-weight:600;margin-bottom:4px;}
+.j-desc{font-size:13px;color:var(--text-s);line-height:1.6;}
+
+.pilares-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.pilar{background:var(--gray-l);border-radius:12px;padding:16px 14px;text-align:center;}
+.pilar .pi{font-size:26px;margin-bottom:8px;}
+.pilar .pt{font-size:13px;font-weight:600;margin-bottom:4px;}
+.pilar .pd{font-size:12px;color:var(--text-s);line-height:1.4;}
+
+.op-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+.op-box{border-radius:10px;padding:14px;}
+.ob-title{font-size:13px;font-weight:600;margin-bottom:5px;}
+.ob-desc{font-size:12px;color:var(--text-s);line-height:1.5;}
+
+.serv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;}
+.serv-tag{background:var(--gray-l);border-radius:8px;padding:10px;font-size:12px;color:var(--gray-d);text-align:center;line-height:1.4;}
+
+.est-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.est-item{background:var(--gray-l);border-radius:10px;padding:12px;display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--gray-d);line-height:1.4;}
+
+.check-list{list-style:none;}
+.check-list li{display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid var(--border);font-size:14px;line-height:1.5;}
+.check-list li:last-child{border-bottom:none;padding-bottom:0;}
+.ck{width:22px;height:22px;border-radius:6px;border:1.5px solid var(--border);background:white;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .15s;margin-top:1px;}
+.ck.on{background:var(--teal);border-color:var(--teal);color:white;}
+
+.alert{border-radius:10px;padding:13px 15px;font-size:13px;line-height:1.6;margin-bottom:12px;display:flex;gap:10px;}
+.alert .ai{font-size:16px;flex-shrink:0;}
+.alert.info{background:var(--orange-l);color:var(--orange-d);}
+.alert.tip{background:var(--teal-l);color:var(--teal);}
+.alert.warn{background:var(--amber-l);color:var(--amber);}
+
+.form-section-label{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-s);margin:16px 0 8px;}
+.form-section-label:first-child{margin-top:0;}
+.form-card{background:white;border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;box-shadow:0 1px 4px rgba(0,0,0,.04);cursor:pointer;transition:all .15s;user-select:none;}
+.form-card:hover{border-color:var(--orange);}
+.form-card.selected{border-color:var(--teal);background:var(--teal-l);}
+.form-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.form-info{flex:1;}
+.form-name{font-size:14px;font-weight:500;color:var(--text);}
+.form-desc{font-size:12px;color:var(--text-s);margin-top:2px;}
+.form-tag{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;margin-top:4px;letter-spacing:.03em;}
+.tag-always{background:var(--teal-l);color:var(--teal);}
+.tag-flag{background:var(--orange-l);color:var(--orange-d);}
+.form-check{width:22px;height:22px;border-radius:6px;border:1.5px solid var(--border);background:white;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .15s;}
+.form-card.selected .form-check{background:var(--teal);border-color:var(--teal);color:white;}
+
+/* QR MODAL */
+.qr-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s;}
+.qr-overlay.open{opacity:1;pointer-events:all;}
+.qr-modal{background:white;border-radius:20px;padding:28px 24px;max-width:360px;width:100%;text-align:center;transform:scale(.95);transition:transform .2s;}
+.qr-overlay.open .qr-modal{transform:scale(1);}
+.qr-modal h3{font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:6px;}
+.qr-modal p{font-size:13px;color:var(--text-s);margin-bottom:20px;line-height:1.5;}
+#qr-container{display:flex;justify-content:center;margin-bottom:16px;}
+.btn-close-qr{width:100%;padding:13px;background:var(--gray-d);color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
+
+.qr-action-area{margin-top:16px;}
+.btn-gen-qr{width:100%;padding:14px;background:var(--orange);color:white;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-gen-qr:hover{background:var(--orange-d);}
+.selected-count{font-size:13px;color:var(--text-s);text-align:center;margin-top:8px;}
+
+.finish-hero{background:linear-gradient(135deg,var(--teal),#0a4f3d);border-radius:var(--radius);padding:28px 24px;text-align:center;color:white;margin-bottom:14px;}
+.finish-hero h3{font-family:'DM Serif Display',serif;font-size:24px;margin-bottom:8px;}
+.finish-hero p{font-size:14px;opacity:.8;line-height:1.6;}
+
+/* NAV */
+.nav-bar{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--border);padding:12px 16px;z-index:100;}
+.nav-inner{max-width:740px;margin:0 auto;display:flex;gap:10px;}
+.btn{flex:1;padding:13px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;border:none;cursor:pointer;transition:all .15s;}
+.btn-prev{background:var(--gray-l);color:var(--gray-d);}
+.btn-next{background:var(--orange);color:white;}
+.btn-next:hover{background:var(--orange-d);}
+.btn:disabled{opacity:.35;cursor:not-allowed;}
+
+/* FORMS VIEW */
+.forms-header{background:white;border-bottom:1px solid var(--border);padding:16px 20px;text-align:center;}
+.forms-logo-name{font-size:20px;font-weight:600;color:var(--gray-d);}
+.forms-logo-name span{color:var(--orange);}
+.forms-logo-sub{font-size:11px;color:var(--text-s);margin-top:2px;}
+.forms-main{max-width:500px;margin:0 auto;padding:24px 16px 40px;}
+.forms-hero{background:linear-gradient(135deg,#5A5A5A,#3a3a3a);border-radius:14px;padding:24px 20px;text-align:center;color:white;margin-bottom:20px;}
+.forms-hero h2{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;margin-bottom:8px;}
+.forms-hero p{font-size:13px;opacity:.75;line-height:1.6;}
+.fl-label{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-s);margin:0 0 10px;}
+.fl-link{display:flex;align-items:center;gap:14px;background:white;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;text-decoration:none;transition:all .15s;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+.fl-link:hover{border-color:var(--orange);transform:translateY(-1px);}
+.fl-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.fl-body{flex:1;}
+.fl-name{font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px;}
+.fl-sub{font-size:12px;color:var(--text-s);}
+.fl-arrow{font-size:18px;color:#CCC;}
+.forms-footer{text-align:center;margin-top:28px;font-size:12px;color:var(--text-s);line-height:1.6;}
+
+@media(max-width:480px){
+  .pilares-grid{grid-template-columns:1fr 1fr;}
+  .est-grid{grid-template-columns:1fr;}
+  .op-grid{grid-template-columns:1fr;}
+  .sec-title{font-size:22px;}
+  .hero h2{font-size:24px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ VIEW APP (PSICÓLOGA) ═══════════════ -->
+<div id="view-app">
+<div class="header">
+  <div class="header-inner">
+    <div class="logo-area">
+      <div class="logo-icon">⚕</div>
+      <div class="logo-text">
+        <div class="clinic">clínica</div>
+        <div class="name">efi<span>C</span>iência</div>
+        <div class="sub">saúde + ensino + pesquisa</div>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-steps" id="prog-steps"></div>
+      <div class="prog-label" id="prog-label">Sessão 1</div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- S0 -->
+<div class="section visible" id="s0">
+  <div class="hero">
+    <div class="pre">Sessão 1 · Boas-vindas</div>
+    <h2>Sejam Bem-<span>Vindos!</span></h2>
+    <p>Para acolher sua família da melhor forma possível, a Clínica efiCiência preparou algumas informações importantes para este início de jornada.</p>
+    <div class="hero-chips">
+      <span class="chip">🏥 Quem somos</span><span class="chip">🗺 Jornada</span><span class="chip">🤝 Orientação Parental</span><span class="chip">🩺 Serviços</span><span class="chip">📜 Regras</span><span class="chip">📎 Formulários</span>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="card-icon" style="background:var(--orange-l)">🏥</span>Quem somos</div>
+    <p>A Clínica efiCiência nasceu em 2020 com o propósito de oferecer cuidado integral, baseado em ciência, humanização e planejamento terapêutico individualizado.</p>
+    <p>Somos uma clínica multidisciplinar, especializada no atendimento a pessoas com deficiências e suas famílias, conectando a intervenção clínica aos contextos reais do paciente e da família.</p>
+  </div>
+</div>
+
+<!-- S1 -->
+<div class="section" id="s1">
+  <div class="step-badge">🗺 Jornada inicial</div>
+  <h2 class="sec-title">Como funciona o processo</h2>
+  <p class="sec-sub">Explique às famílias as etapas desde hoje até o início do tratamento.</p>
+  <div class="card">
+    <div class="jornada-step"><div class="j-num">1</div><div><div class="j-title">Anamnese — 3 sessões</div><div class="j-desc">1ª sessão: apresentação da clínica, metodologia e envio dos questionários (preenchimento obrigatório). 2ª e 3ª sessões: coleta e validação das informações com os responsáveis.</div></div></div>
+    <div class="jornada-step"><div class="j-num">2</div><div><div class="j-title">Avaliação com especialistas — até 10 sessões</div><div class="j-desc">Observações clínicas e aplicação de instrumentos padronizados para aprofundamento do quadro do paciente.</div></div></div>
+    <div class="jornada-step"><div class="j-num">3</div><div><div class="j-title">Produção do Relatório + PTS — 15 dias corridos</div><div class="j-desc">Elaboração do relatório clínico, desenvolvimento do Projeto Terapêutico Singular e validação pelo Coordenador Clínico.</div></div></div>
+    <div class="jornada-step"><div class="j-num">4</div><div><div class="j-title">Devolutiva + Agenda Final — 1 sessão</div><div class="j-desc">Sessão de devolutiva com cada especialista em até 15 dias corridos, seguida de até 48h úteis para agendamento da agenda final.</div></div></div>
+  </div>
+</div>
+
+<!-- S2 -->
+<div class="section" id="s2">
+  <div class="step-badge">💡 Nossos pilares</div>
+  <h2 class="sec-title">O que nos guia</h2>
+  <p class="sec-sub">Os valores que orientam cada decisão clínica da Clínica efiCiência.</p>
+  <div class="card">
+    <div class="pilares-grid">
+      <div class="pilar"><div class="pi">🔬</div><div class="pt">Ciência</div><div class="pd">Práticas baseadas em evidências</div></div>
+      <div class="pilar"><div class="pi">🤝</div><div class="pt">Humanização</div><div class="pd">Cuidado centrado na pessoa</div></div>
+      <div class="pilar"><div class="pi">🎯</div><div class="pt">Individualização</div><div class="pd">PTS singular para cada paciente</div></div>
+      <div class="pilar"><div class="pi">🔗</div><div class="pt">Integração</div><div class="pd">Equipe interdisciplinar conectada</div></div>
+      <div class="pilar"><div class="pi">🏠</div><div class="pt">Contexto real</div><div class="pd">Intervenção no cotidiano</div></div>
+      <div class="pilar"><div class="pi">📈</div><div class="pt">Evolução contínua</div><div class="pd">Monitoramento e reavaliação</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- S3 -->
+<div class="section" id="s3">
+  <div class="step-badge">👨‍👩‍👧 Orientação Parental</div>
+  <h2 class="sec-title">Orientação Parental — OP</h2>
+  <p class="sec-sub">Obrigatória para todos os pacientes.</p>
+  <div class="card">
+    <p>A OP tem como objetivo <strong>orientar e treinar os pais</strong> para o manejo das demandas do dia a dia, favorecendo a generalização das habilidades trabalhadas em terapia.</p>
+    <p style="margin-top:10px">Conduzida pela <strong>Profa. Dra. Ana Célia Nunes</strong> (Terapeuta Ocupacional) e pelos Supervisores, com apoio de outros especialistas conforme necessário.</p>
+    <div class="op-grid">
+      <div class="op-box" style="background:var(--coral-l)"><div class="ob-title" style="color:var(--coral)">📅 Mensal</div><div class="ob-desc">Casos de maior complexidade — acompanhamento mais próximo.</div></div>
+      <div class="op-box" style="background:var(--teal-l)"><div class="ob-title" style="color:var(--teal)">📅 Bimestral</div><div class="ob-desc">Casos de menor complexidade — suporte contínuo.</div></div>
+    </div>
+    <div class="alert warn" style="margin-top:14px;margin-bottom:0"><span class="ai">⚠️</span><span>Periodicidade definida pelos Supervisores/RTs após a avaliação.</span></div>
+  </div>
+</div>
+
+<!-- S4 -->
+<div class="section" id="s4">
+  <div class="step-badge">🩺 Serviços</div>
+  <h2 class="sec-title">O que oferecemos</h2>
+  <p class="sec-sub">Atendimento interdisciplinar baseado em evidências.</p>
+  <div class="card">
+    <div class="serv-grid">
+      <div class="serv-tag">🗣️ Fonoaudiologia</div>
+      <div class="serv-tag">🥗 Nutrição — Seletividade</div>
+      <div class="serv-tag">🦵 Fisioterapia Motora</div>
+      <div class="serv-tag">🤸 Psicomotricidade</div>
+      <div class="serv-tag">🎵 Musicoterapia</div>
+      <div class="serv-tag">📚 Psicopedagogia</div>
+      <div class="serv-tag">✋ Terapia Ocupacional</div>
+      <div class="serv-tag">🧠 Psicologia ABA e TCC</div>
+      <div class="serv-tag">🧩 Avaliação Neuropsicológica</div>
+      <div class="serv-tag">📋 Reunião de Equipe</div>
+      <div class="serv-tag">🎯 Planejamento e Estratégia</div>
+    </div>
+  </div>
+</div>
+
+<!-- S5 -->
+<div class="section" id="s5">
+  <div class="step-badge">🏛 Estrutura</div>
+  <h2 class="sec-title">Nosso espaço</h2>
+  <p class="sec-sub">Apresente o espaço e o funcionamento prático.</p>
+  <div class="card">
+    <div class="est-grid">
+      <div class="est-item"><span>🚪</span><span>23 salas de atendimento</span></div>
+      <div class="est-item"><span>👤</span><span>Atendimentos individuais — 1 profissional por sala</span></div>
+      <div class="est-item"><span>👥</span><span>Grupos de Habilidades Sociais</span></div>
+      <div class="est-item"><span>🍽️</span><span>Refeitório exclusivo para pacientes</span></div>
+      <div class="est-item"><span>🚗</span><span>Estacionamento gratuito</span></div>
+      <div class="est-item"><span>🏠</span><span>Salas temáticas para treinos de AVD</span></div>
+      <div class="est-item"><span>⏱️</span><span>Sessões de 50 minutos</span></div>
+      <div class="est-item"><span>🥤</span><span>Intervalo fixo para lanche</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- S6 -->
+<div class="section" id="s6">
+  <div class="step-badge">📜 Regras</div>
+  <h2 class="sec-title">Horários e presença</h2>
+  <p class="sec-sub">Leia junto com a família. Marque cada item conforme for apresentado.</p>
+  <div class="card">
+    <ul class="check-list">
+      <li><span class="ck" onclick="tog(this)"></span>As sessões iniciam e terminam no horário marcado, independentemente de atrasos.</li>
+      <li><span class="ck" onclick="tog(this)"></span>Tolerância máxima de atraso: <strong>20 minutos</strong>. Após esse período, aguardar a próxima sessão.</li>
+      <li><span class="ck" onclick="tog(this)"></span><strong>2 faltas não justificadas</strong> no mês implicam na perda da agenda fixa.</li>
+      <li><span class="ck" onclick="tog(this)"></span>Os pais/responsáveis devem estar presentes no horário do lanche, quando aplicável.</li>
+      <li><span class="ck" onclick="tog(this)"></span>Caso se ausentem durante a sessão, é obrigatório retornar ao final do atendimento.</li>
+      <li><span class="ck" onclick="tog(this)"></span>Não dispomos de profissionais para permanência da criança após o término das terapias.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- S7 -->
+<div class="section" id="s7">
+  <div class="step-badge">📜 Regras</div>
+  <h2 class="sec-title">Cancelamentos e cobranças</h2>
+  <p class="sec-sub">Itens financeiros e administrativos.</p>
+  <div class="card">
+    <div class="card-title"><span class="card-icon" style="background:var(--coral-l)">💰</span>Cancelamentos</div>
+    <ul class="check-list">
+      <li><span class="ck" onclick="tog(this)"></span>Cancelamentos devem ser informados até <strong>17h do dia útil anterior</strong> à sessão.</li>
+      <li><span class="ck" onclick="tog(this)"></span>Faltas sem justificativa ou cancelamentos tardios implicam cobrança do valor da sessão particular vigente.</li>
+      <li><span class="ck" onclick="tog(this)"></span>Ausências ≥ 7 dias: liberação sem cobrança (sem garantia de retorno ao mesmo horário) <em>ou</em> manutenção com pagamento de 30% do valor particular.</li>
+      <li><span class="ck" onclick="tog(this)"></span>A cobrança refere-se à reserva do horário e não é reembolsável por convênios.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="card-icon" style="background:var(--purple-l)">📋</span>Guias e pedidos médicos</div>
+    <ul class="check-list">
+      <li><span class="ck" onclick="tog(this)"></span>Todas as atividades clínicas exigem <strong>guia e token</strong>, inclusive as indiretas (Planejamento Mensal, Reuniões de Equipe).</li>
+      <li><span class="ck" onclick="tog(this)"></span>Acompanhe a validade dos pedidos médicos e envie a renovação pelo WhatsApp da recepção.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- S8 -->
+<div class="section" id="s8">
+  <div class="step-badge">📎 Formulários</div>
+  <h2 class="sec-title">Envio dos formulários</h2>
+  <p class="sec-sub">Selecione os formulários do perfil deste paciente e gere o QR Code para os pais escanearem.</p>
+  <div class="alert tip"><span class="ai">✅</span><span>Os dois primeiros são <strong>obrigatórios para todos</strong>. Os demais dependem do perfil observado hoje.</span></div>
+
+  <div class="form-section-label">Sempre envia — todos os pacientes</div>
+  <div class="form-card selected" onclick="toggleForm(this)" data-url="https://forms.gle/oNBf9gZR1BsqMPiRA" data-name="Anamnese Geral">
+    <div class="form-icon" style="background:var(--green-l)">📋</div>
+    <div class="form-info"><div class="form-name">Anamnese Geral</div><div class="form-desc">Histórico completo · desenvolvimento · família · escola</div><span class="form-tag tag-always">obrigatório</span></div>
+    <div class="form-check">✓</div>
+  </div>
+  <div class="form-card selected" onclick="toggleForm(this)" data-url="https://forms.gle/RnsEAd5nw8G6vovV8" data-name="EBR — Rotina familiar">
+    <div class="form-icon" style="background:var(--teal-l)">🏠</div>
+    <div class="form-info"><div class="form-name">EBR — Entrevista Baseada em Rotinas</div><div class="form-desc">Rotina detalhada do cotidiano familiar</div><span class="form-tag tag-always">obrigatório</span></div>
+    <div class="form-check">✓</div>
+  </div>
+
+  <div class="form-section-label">Selecione conforme o perfil</div>
+  <div class="form-card" onclick="toggleForm(this)" data-url="https://forms.gle/TgTdMayQzuikBfuS8" data-name="Anamnese ABA — Psicologia">
+    <div class="form-icon" style="background:var(--purple-l)">🧠</div>
+    <div class="form-info"><div class="form-name">Anamnese ABA — Psicologia</div><div class="form-desc">VB-MAPP · ABLLS-R · AFLS · perfil de habilidades</div><span class="form-tag tag-flag">TEA / DI / perfil complexo</span></div>
+    <div class="form-check"></div>
+  </div>
+  <div class="form-card" onclick="toggleForm(this)" data-url="https://forms.gle/4pb2GqB2KfsCQBHR6" data-name="TO — Integração Sensorial">
+    <div class="form-icon" style="background:var(--amber-l)">✋</div>
+    <div class="form-info"><div class="form-name">TO — Integração Sensorial</div><div class="form-desc">Perfil sensorial completo</div><span class="form-tag tag-flag">flag sensorial</span></div>
+    <div class="form-check"></div>
+  </div>
+  <div class="form-card" onclick="toggleForm(this)" data-url="https://forms.gle/ggsfMQyd5coTe6aA8" data-name="Checklist Sensorial — Pré-escolares">
+    <div class="form-icon" style="background:var(--amber-l)">👶</div>
+    <div class="form-info"><div class="form-name">Checklist Sensorial — Pré-escolares</div><div class="form-desc">Integração sensorial para crianças de 3 a 4 anos</div><span class="form-tag tag-flag">3–4 anos</span></div>
+    <div class="form-check"></div>
+  </div>
+  <div class="form-card" onclick="toggleForm(this)" data-url="https://forms.gle/ENsqqtgvzedQKGdk9" data-name="Formulário adicional 1">
+    <div class="form-icon" style="background:var(--gray-l)">📝</div>
+    <div class="form-info"><div class="form-name">Formulário adicional 1</div><div class="form-desc">Atualize o nome conforme necessário</div><span class="form-tag tag-flag">conforme indicação</span></div>
+    <div class="form-check"></div>
+  </div>
+  <div class="form-card" onclick="toggleForm(this)" data-url="https://forms.gle/NNUEKAE3oMMzExX67" data-name="Formulário adicional 2">
+    <div class="form-icon" style="background:var(--gray-l)">📝</div>
+    <div class="form-info"><div class="form-name">Formulário adicional 2</div><div class="form-desc">Atualize o nome conforme necessário</div><span class="form-tag tag-flag">conforme indicação</span></div>
+    <div class="form-check"></div>
+  </div>
+  <div class="form-card" onclick="toggleForm(this)" data-url="https://forms.gle/aFvWPQdpLXV2wP4m9" data-name="Formulário adicional 3">
+    <div class="form-icon" style="background:var(--gray-l)">📝</div>
+    <div class="form-info"><div class="form-name">Formulário adicional 3</div><div class="form-desc">Atualize o nome conforme necessário</div><span class="form-tag tag-flag">conforme indicação</span></div>
+    <div class="form-check"></div>
+  </div>
+
+  <div class="qr-action-area">
+    <button class="btn-gen-qr" onclick="generateQR()">📱 Gerar QR Code para os pais</button>
+    <div class="selected-count" id="sel-count">2 formulários selecionados</div>
+  </div>
+</div>
+
+<!-- S9 -->
+<div class="section" id="s9">
+  <div class="step-badge">✅ Encerramento</div>
+  <h2 class="sec-title">Sessão 1 concluída</h2>
+  <p class="sec-sub">Confirme os próximos passos com a família.</p>
+  <div class="finish-hero"><h3>Tudo certo por aqui!</h3><p>Os formulários foram compartilhados. A próxima sessão será a aplicação da TFE — somente com os pais, sem a criança.</p></div>
+  <div class="card">
+    <div class="card-title"><span class="card-icon" style="background:var(--teal-l)">✅</span>Checklist de encerramento</div>
+    <ul class="check-list">
+      <li><span class="ck" onclick="tog(this)"></span>Apresentação da clínica concluída</li>
+      <li><span class="ck" onclick="tog(this)"></span>Jornada inicial explicada</li>
+      <li><span class="ck" onclick="tog(this)"></span>Orientação Parental explicada</li>
+      <li><span class="ck" onclick="tog(this)"></span>Regras e normas apresentadas</li>
+      <li><span class="ck" onclick="tog(this)"></span>Dúvidas esclarecidas</li>
+      <li><span class="ck" onclick="tog(this)"></span>QR Code compartilhado com a família</li>
+      <li><span class="ck" onclick="tog(this)"></span>Próxima sessão agendada — TFE com os pais</li>
+    </ul>
+  </div>
+  <div class="alert info"><span class="ai">💡</span><span><strong>Próxima sessão:</strong> TFE com os pais. Verifique se os formulários já foram respondidos antes de começar.</span></div>
+</div>
+
+</div><!-- /main -->
+
+<!-- QR MODAL -->
+<div class="qr-overlay" id="qr-overlay" onclick="closeQR(event)">
+  <div class="qr-modal">
+    <h3>📱 QR Code pronto!</h3>
+    <p>Vire a tela para os pais e peça para apontarem a câmera do celular. A página com os formulários abre automaticamente.</p>
+    <div id="qr-container"></div>
+    <button class="btn-close-qr" onclick="closeQRBtn()">Fechar</button>
+  </div>
+</div>
+
+<!-- NAV BAR -->
+<div class="nav-bar">
+  <div class="nav-inner">
+    <button class="btn btn-prev" id="btn-prev" onclick="nav(-1)" disabled>← Anterior</button>
+    <button class="btn btn-next" id="btn-next" onclick="nav(1)">Próximo →</button>
+  </div>
+</div>
+</div><!-- /view-app -->
+
+<!-- ═══════════════ VIEW FORMS (PAIS) ═══════════════ -->
+<div id="view-forms">
+  <div class="forms-header">
+    <div class="forms-logo-name">efi<span>C</span>iência</div>
+    <div class="forms-logo-sub">clínica · saúde + ensino + pesquisa</div>
+  </div>
+  <div class="forms-main">
+    <div class="forms-hero">
+      <h2>Seus formulários</h2>
+      <p>Preencha os questionários abaixo antes da próxima sessão. Eles ajudam a equipe a conhecer melhor seu filho e preparar o melhor plano de cuidado.</p>
+    </div>
+    <div class="fl-label" id="fl-count"></div>
+    <div id="fl-list"></div>
+    <div class="forms-footer"><strong>Clínica efiCiência</strong><br>Dúvidas? Entre em contato com a recepção.<br>Profª Dra. Ana Célia Nunes</div>
+  </div>
+</div>
+
+<script>
+// ── NAVEGAÇÃO APP ──
+const SECTIONS=[{id:'s0',label:'Boas-vindas'},{id:'s1',label:'Jornada inicial'},{id:'s2',label:'Nossos pilares'},{id:'s3',label:'Orientação Parental'},{id:'s4',label:'Nossos serviços'},{id:'s5',label:'Nossa estrutura'},{id:'s6',label:'Regras — Horários'},{id:'s7',label:'Regras — Financeiro'},{id:'s8',label:'Formulários'},{id:'s9',label:'Encerramento'}];
+let cur=0;
+function buildProg(){const w=document.getElementById('prog-steps');w.innerHTML='';SECTIONS.forEach((s,i)=>{const d=document.createElement('div');d.className='prog-dot'+(i===cur?' active':i<cur?' done':'');d.onclick=()=>goTo(i);w.appendChild(d);});document.getElementById('prog-label').textContent=SECTIONS[cur].label;}
+function goTo(idx){document.getElementById(SECTIONS[cur].id).classList.remove('visible');cur=idx;document.getElementById(SECTIONS[cur].id).classList.add('visible');document.getElementById('btn-prev').disabled=cur===0;const nb=document.getElementById('btn-next');nb.disabled=cur===SECTIONS.length-1;nb.textContent=cur===SECTIONS.length-1?'✓ Concluído':'Próximo →';buildProg();window.scrollTo({top:0,behavior:'smooth'});}
+function nav(d){goTo(cur+d);}
+function tog(el){el.classList.toggle('on');el.textContent=el.classList.contains('on')?'✓':'';}
+
+// ── FORMULÁRIOS ──
+function toggleForm(card){if(card.querySelector('.tag-always'))return;card.classList.toggle('selected');card.querySelector('.form-check').textContent=card.classList.contains('selected')?'✓':'';updateCount();}
+function updateCount(){const n=document.querySelectorAll('.form-card.selected').length;document.getElementById('sel-count').textContent=n+' formulário'+(n!==1?'s':'')+' selecionado'+(n!==1?'s':'');}
+
+// ── QR CODE ──
+function generateQR(){
+  const selected=Array.from(document.querySelectorAll('.form-card.selected'));
+  const forms=selected.map(c=>({name:c.dataset.name,url:c.dataset.url}));
+  const params=forms.map(f=>'f='+encodeURIComponent(f.url)+'&n='+encodeURIComponent(f.name)).join('&');
+  const targetUrl=window.location.href.split('?')[0]+'?'+params;
+  document.getElementById('qr-container').innerHTML='';
+  new QRCode(document.getElementById('qr-container'),{text:targetUrl,width:220,height:220,colorDark:'#1C1C1A',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+  document.getElementById('qr-overlay').classList.add('open');
+}
+function closeQR(e){if(e.target===document.getElementById('qr-overlay'))closeQRBtn();}
+function closeQRBtn(){document.getElementById('qr-overlay').classList.remove('open');}
+
+// ── ROTEAMENTO: se tem parâmetros = view pais ──
+function init(){
+  const p=new URLSearchParams(window.location.search);
+  const urls=p.getAll('f');
+  const names=p.getAll('n');
+  if(urls.length>0){
+    // Mostra view pais
+    document.getElementById('view-app').style.display='none';
+    document.getElementById('view-forms').style.display='block';
+    const ICONS=['📋','🏠','🧠','✋','👶','📝','📝','📝'];
+    const COLORS=['#EAF3DE','#E1F5EE','#EEEDFE','#FAEEDA','#FAEEDA','#F5F5F5','#F5F5F5','#F5F5F5'];
+    const list=document.getElementById('fl-list');
+    document.getElementById('fl-count').textContent=urls.length+' formulário'+(urls.length>1?'s':'')+' para preencher';
+    urls.forEach((u,i)=>{
+      const a=document.createElement('a');
+      a.className='fl-link';a.href=u;a.target='_blank';a.rel='noopener';
+      a.innerHTML=`<div class="fl-icon" style="background:${COLORS[i]||'#F5F5F5'}">${ICONS[i]||'📝'}</div><div class="fl-body"><div class="fl-name">${names[i]||'Formulário'}</div><div class="fl-sub">Toque para abrir e preencher</div></div><span class="fl-arrow">→</span>`;
+      list.appendChild(a);
+    });
+  } else {
+    buildProg();
+    updateCount();
+  }
+}
+init();
+</script>
+</body>
+</html>
